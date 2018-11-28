@@ -33,9 +33,13 @@ import TTImp.ProcessTTImp
 import TTImp.Reflect
 
 import Control.Catchable
-import System
+-- import System
 
-getNChars : Nat -> IO (List Char)
+import IdrisJvm.IO
+import IdrisJvm.File
+import IdrisJvm.System
+
+getNChars : Nat -> JVM_IO (List Char)
 getNChars Z = pure []
 getNChars (S k)
     = do x <- getChar
@@ -68,7 +72,7 @@ toHex m (d :: ds)
 
 -- Read 6 characters. If they're a hex number, read that many characters.
 -- Otherwise, just read to newline
-getInput : IO String
+getInput : JVM_IO String
 getInput 
     = do x <- getNChars 6
          case toHex 1 (reverse x) of

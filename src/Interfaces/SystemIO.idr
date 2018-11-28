@@ -1,8 +1,11 @@
 module Interfaces.SystemIO
 
 import Control.Monad.StateE
-import Control.IOExcept
+import Control.IOExceptJ
 import Core.Context
+
+import IdrisJvm.IO
+import IdrisJvm.System
 
 public export
 interface SystemIO (m : Type -> Type) where
@@ -10,6 +13,10 @@ interface SystemIO (m : Type -> Type) where
 
 export
 SystemIO IO where
+  getArgs = lift getArgs
+
+export
+SystemIO JVM_IO where
   getArgs = lift getArgs
 
 export

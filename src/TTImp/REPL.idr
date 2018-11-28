@@ -16,6 +16,8 @@ import Parser.REPL
 
 import Control.Catchable
 
+import IdrisJvm.IO
+
 %default covering
 
 showInfo : (Name, Def) -> Core annot ()

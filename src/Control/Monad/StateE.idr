@@ -5,7 +5,9 @@
 module Control.Monad.StateE
 
 import public Control.Catchable
-import public Control.IOExcept
+import public Control.IOExceptJ
+
+import IdrisJvm.IO
 
 %default total
 
@@ -240,18 +242,18 @@ interface ConsoleIO (m : Type -> Type) where
   getChar : SE s err m Char
 
 export 
-ConsoleIO IO where
+ConsoleIO JVM_IO where
   putStr = lift . putStr
   getStr = lift getLine
-  putChar = lift . putChar
-  getChar = lift getChar
+  putChar = lift . jputChar
+  getChar = lift jgetChar
 
 export 
 ConsoleIO (IOExcept err) where
   putStr str = lift (ioe_lift (putStr str))
   getStr = lift (ioe_lift getLine)
-  putChar c = lift (ioe_lift (putChar c))
-  getChar = lift (ioe_lift getChar)
+  putChar c = lift (ioe_lift (jputChar c))
+  getChar = lift (ioe_lift jgetChar)
 
 export
 putStrLn : ConsoleIO m => String -> SE ss err m ()

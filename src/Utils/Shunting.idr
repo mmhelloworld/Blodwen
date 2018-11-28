@@ -2,6 +2,8 @@ module Utils.Shunting
 
 import Core.Core
 
+import IdrisJvm.IO
+
 %default total
 
 -- The shunting yard algorithm turns a list of tokens with operators into

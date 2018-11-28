@@ -3,6 +3,11 @@ module Idris.IDEMode.Commands
 import Core.Core
 import Core.Name
 
+import IdrisJvm.IO
+import IdrisJvm.File
+import Java.Lang
+
+%hide Prelude.File.File
 %default covering
 
 public export
@@ -143,8 +148,8 @@ export
 version : Int -> Int -> SExp
 version maj min = toSExp (SymbolAtom "protocol-version", maj, min)
 
-hex : Int -> IO ()
-hex num = foreign FFI_C "printf" (String -> Int -> IO ()) "%06x" num
+hex : Int -> JVM_IO ()
+hex num = print $ JavaString.format "%06x" !(listToArray [the Object $ believe_me $ JInteger.valueOf num])
 
 export
 send : SExpable a => a -> Core annot ()

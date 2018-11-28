@@ -16,10 +16,10 @@ src/BlodwenPaths.idr:
 	echo 'module BlodwenPaths; export bprefix : String; bprefix = "${PREFIX}"' > src/BlodwenPaths.idr
 
 prelude:
-	make -C prelude BLODWEN=../blodwen
+	make -C prelude BLODWEN=../blodwenjvm
 
 base: prelude
-	make -C base BLODWEN=../blodwen
+	make -C base BLODWEN=../blodwenjvm
 
 libs : prelude base
 
@@ -36,8 +36,8 @@ install:
 	mkdir -p ${PREFIX}/blodwen/support/chez
 	mkdir -p ${PREFIX}/blodwen/support/chicken
 	mkdir -p ${PREFIX}/blodwen/support/racket
-	make -C prelude install BLODWEN=../blodwen
-	make -C base install BLODWEN=../blodwen
+	make -C prelude install BLODWEN=../blodwenjvm
+	make -C base install BLODWEN=../blodwenjvm
 
 	install blodwen ${PREFIX}/bin
 	install support/chez/* ${PREFIX}/blodwen/support/chez

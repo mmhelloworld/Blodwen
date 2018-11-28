@@ -8,7 +8,8 @@ import Core.TT
 
 import Data.CSet
 
-%include C "sys/stat.h"
+import IdrisJvm.IO
+import IdrisJvm.File
     
 public export
 record Codegen annot where
@@ -63,7 +64,7 @@ findUsedNames tm
 -- Some things missing from Prelude.File
 
 export
-exists : String -> IO Bool
+exists : String -> JVM_IO Bool
 exists f 
     = do Right ok <- openFile f Read
              | Left err => pure False
@@ -71,10 +72,6 @@ exists f
          pure True
 
 export
-tmpName : IO String
-tmpName = foreign FFI_C "tmpnam" (Ptr -> IO String) null
-
-export
-chmod : String -> Int -> IO ()
-chmod f m = foreign FFI_C "chmod" (String -> Int -> IO ()) f m
+tmpName : JVM_IO String
+tmpName = getTemporaryFileName
 

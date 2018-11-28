@@ -17,3 +17,12 @@ tramp
 /src/BlodwenPaths.idr
 /tests/**/output
 /*/build/
+
+*.iml
+ttimpjvm
+blodwenjvmout
+ttimpjvmout
+
+*.class
+*.jar
+build

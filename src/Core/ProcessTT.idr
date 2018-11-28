@@ -16,6 +16,9 @@ import Control.Catchable
 import Control.Monad.StateE
 import Interfaces.FileIO
 
+import IdrisJvm.IO
+import IdrisJvm.File
+
 %default covering
 
 using (FileIO m)

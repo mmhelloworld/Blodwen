@@ -1,16 +1,21 @@
 module Utils.Binary
 
 import Core.Core
-import Data.Buffer
 import Data.List
 import Data.Vect
 import public Data.StringMap
+import IdrisJvm.Data.Buffer
+import IdrisJvm.IO
+import IdrisJvm.File
 
 -- Serialising data as binary. Provides an interface TTC which allows
 -- reading and writing to chunks of memory, "Binary", which can be written
 -- to and read from files.
 
 %default covering
+%hide Prelude.File.File
+%hide Prelude.File.FileError
+%hide Prelude.File.openFile
 
 -- A label for binary states
 export 
@@ -49,7 +54,7 @@ incLoc i c = record { loc $= (+i) } c
 export
 data Binary = MkBin (List Chunk) Chunk (List Chunk)
 
-dumpBin : Binary -> IO ()
+dumpBin : Binary -> JVM_IO ()
 dumpBin (MkBin done chunk rest)
    = do printLn !(traverse bufferData (map buf done))
         printLn !(bufferData (buf chunk))
@@ -76,7 +81,7 @@ req (c :: cs)
 -- Take all the data from the chunks in a 'Binary' and copy them into one
 -- single buffer, ready for writing to disk.
 -- TODO: YAGNI? Delete if so...
-toBuffer : Binary -> IO (Maybe Buffer)
+toBuffer : Binary -> JVM_IO (Maybe Buffer)
 toBuffer (MkBin done cur rest)
     = do let chunks = reverse done ++ cur :: rest
          Just b <- newBuffer (req chunks)
@@ -84,19 +89,19 @@ toBuffer (MkBin done cur rest)
          copyToBuf 0 b chunks
          pure (Just b)
   where
-    copyToBuf : (pos : Int) -> Buffer -> List Chunk -> IO ()
+    copyToBuf : (pos : Int) -> Buffer -> List Chunk -> JVM_IO ()
     copyToBuf pos b [] = pure ()
     copyToBuf pos b (c :: cs)
         = do copyData (buf c) 0 (used c) b pos
              copyToBuf (pos + used c) b cs
 
-fromBuffer : Buffer -> IO Binary
+fromBuffer : Buffer -> JVM_IO Binary
 fromBuffer buf
     = do len <- rawSize buf
          pure (MkBin [] (MkChunk buf 0 len len) []) -- assume all used
 
 export
-writeToFile : (fname : String) -> Binary -> IO (Either FileError ())
+writeToFile : (fname : String) -> Binary -> JVM_IO (Either FileError ())
 writeToFile fname (MkBin done cur rest)
     = do Right h <- openFile fname WriteTruncate
                | Left err => pure (Left err)
@@ -105,21 +110,21 @@ writeToFile fname (MkBin done cur rest)
          closeFile h
          pure (Right ())
   where
-    writeChunks : File -> List Chunk -> IO ()
+    writeChunks : File -> List Chunk -> JVM_IO ()
     writeChunks h [] = pure ()
     writeChunks h (c :: cs)
         = do writeBufferToFile h (resetBuffer (buf c)) (used c)
              writeChunks h cs
 
 export
-readFromFile : (fname : String) -> IO (Either FileError Binary)
+readFromFile : (fname : String) -> JVM_IO (Either FileError Binary)
 readFromFile fname
     = do Right h <- openFile fname Read
                | Left err => pure (Left err)
          Right max <- fileSize h
                | Left err => pure (Left err)
          Just b <- newBuffer max
-               | Nothing => pure (Left (GenericFileError 0)) --- um, not really
+               | Nothing => pure (Left $ believe_me (unableToReadFile fname)) --- um, not really
          b <- readBufferFromFile h b max
          pure (Right (MkBin [] (MkChunk b 0 max max) []))
 

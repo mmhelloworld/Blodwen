@@ -1,8 +1,10 @@
 module Interfaces.FileIO
 
 import Control.Monad.StateE
-import Control.IOExcept
+import Control.IOExceptJ
 import Core.Context
+import IdrisJvm.IO
+import IdrisJvm.File
 
 public export
 interface FileIO (m : Type -> Type) where
@@ -12,11 +14,12 @@ interface FileIO (m : Type -> Type) where
               SE s err m (Either FileError ())
 
 export
-FileIO IO where
-  readFile f = lift (readFile f)
-  writeFile f c = lift (writeFile f c)
+FileIO JVM_IO where
+  readFile f = lift (IdrisJvm.File.readFile f)
+  writeFile f c = lift (IdrisJvm.File.writeFile f c)
 
 export
 FileIO (IOExcept (Error annot)) where
-  readFile f = lift (ioe_lift (readFile f))
-  writeFile f c = lift (ioe_lift (writeFile f c))
+  -- not handling errors for now
+  readFile f = lift (ioe_lift (IdrisJvm.File.readFile f))
+  writeFile f c = lift (ioe_lift (IdrisJvm.File.writeFile f c))

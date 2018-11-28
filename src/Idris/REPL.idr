@@ -39,6 +39,10 @@ import Control.Catchable
 
 import System
 
+import IdrisJvm.IO
+import IdrisJvm.File
+import IdrisJvm.System
+
 %default covering
 
 showInfo : (Name, GlobalDef) -> Core annot ()
@@ -415,7 +419,7 @@ process Edit
                             pure True
               Just f =>
                 do let line = maybe "" (\i => " +" ++ show i) (errorLine opts)
-                   coreLift $ system (editor opts ++ " " ++ f ++ line)
+                   coreLift $ IdrisJvm.System.system (editor opts ++ " " ++ f ++ line)
                    loadMainFile f
                    pure True
 process (Compile ctm outfile)

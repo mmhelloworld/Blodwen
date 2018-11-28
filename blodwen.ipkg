@@ -25,9 +25,12 @@ modules = Idris.CommandLine,
           Idris.IDEMode.TokenLine
 
 sourcedir = src
-executable = blodwen
--- opts = "--partial-eval --cg-opt -O2"
-opts = "--partial-eval"
+
+executable = blodwenjvmout
+
+opts = "--partial-eval --portable-codegen jvm"
+
+pkgs = idrisjvmffi
 
 main = Idris.Main
 

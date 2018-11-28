@@ -15,6 +15,9 @@ import Idris.Syntax
 
 import Control.Monad.State
 
+import IdrisJvm.IO
+import IdrisJvm.File
+
 %default covering
 
 getLine : Nat -> List String -> Maybe String

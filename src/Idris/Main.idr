@@ -21,9 +21,12 @@ import Idris.SetOptions
 import Idris.Syntax
 
 import Data.Vect
-import System
+-- import System
 
 import BlodwenPaths
+
+import IdrisJvm.IO
+import IdrisJvm.System
 
 %default covering
 
@@ -109,7 +112,7 @@ stMain opts
 
 -- Run any options (such as --version or --help) which imply printing a
 -- message then exiting. Returns wheter the program should continue
-quitOpts : List CLOpt -> IO Bool
+quitOpts : List CLOpt -> JVM_IO Bool
 quitOpts [] = pure True
 quitOpts (Version :: _) 
     = do putStrLn versionMsg
@@ -122,7 +125,7 @@ quitOpts (ShowPrefix :: _)
          pure False
 quitOpts (_ :: opts) = quitOpts opts
 
-main : IO ()
+main : JVM_IO ()
 main = do Right opts <- getCmdOpts
              | Left err =>
                     do putStrLn err

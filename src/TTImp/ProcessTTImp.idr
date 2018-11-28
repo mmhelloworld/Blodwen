@@ -25,6 +25,13 @@ import Control.Catchable
 import Control.Monad.StateE
 import Interfaces.FileIO
 
+import IdrisJvm.IO
+import IdrisJvm.File
+
+%hide Prelude.File.File
+%hide Prelude.File.FileError
+%hide Prelude.File.readFile
+
 %default covering
 
 -- Need to propagate the top level elaborator 'processDecl' throughout
