@@ -13,6 +13,8 @@ import TTImp.ProcessType
 import TTImp.Reflect
 import TTImp.TTImp
 
+import Control.Catchable
+
 elabScript : {auto c : Ref Ctxt Defs} ->
              {auto u : Ref UST (UState annot)} ->
              {auto i : Ref ImpST (ImpState annot)} ->

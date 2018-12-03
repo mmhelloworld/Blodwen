@@ -28,7 +28,7 @@ sourcedir = src
 
 executable = blodwenjvmout
 
-opts = "--partial-eval --portable-codegen jvm"
+opts = "--partial-eval --cg-opt -O2 --portable-codegen jvm"
 
 pkgs = idrisjvmffi
 
