@@ -38,6 +38,7 @@ modules = Compiler.Common,
           Core.UnifyState,
 
           Control.Monad.StateE,
+          Control.IOExceptJ,
 
           Data.Bool.Extra,
           Data.CMap,
@@ -89,8 +90,12 @@ modules = Compiler.Common,
           Utils.Binary
 
 sourcedir = src
-executable = ttimp
-opts = "--partial-eval"
+
+executable = ttimpjvmout
+
+opts = "--partial-eval --portable-codegen jvm"
+
+pkgs = idrisjvmffi
 
 main = TTImp.Main
 

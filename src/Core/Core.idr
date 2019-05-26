@@ -5,7 +5,8 @@ import Core.CaseTree
 import Parser.Support
 
 import public Control.Catchable
-import public Data.IORef
+import IdrisJvm.IO
+import IdrisJvm.File
 
 %default covering
 
@@ -295,11 +296,11 @@ getAnnot (InRHS x y err) = getAnnot err
 export
 record Core annot t where
   constructor MkCore
-  runCore : IO (Either (Error annot) t)
+  runCore : JVM_IO (Either (Error annot) t)
 
 export
 coreRun : Core annot a -> 
-          (Error annot -> IO b) -> (a -> IO b) -> IO b
+          (Error annot -> JVM_IO b) -> (a -> JVM_IO b) -> JVM_IO b
 coreRun (MkCore act) err ok = either err ok !act
 
 export
@@ -317,7 +318,7 @@ wrapError fe (MkCore prog)
 -- This would be better if we restrict it to a limited set of IO operations
 export
 %inline
-coreLift : IO a -> Core annot a
+coreLift : JVM_IO a -> Core annot a
 coreLift op = MkCore $ map Right op
 
 {- Monad, Applicative, Traversable are specialised by hand for Core.

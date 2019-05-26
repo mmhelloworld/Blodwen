@@ -7,6 +7,10 @@ import Parser.Lexer
 import Parser.Support
 import Text.Lexer
 
+import IdrisJvm.IO
+import IdrisJvm.File
+import IdrisJvm.System
+
 -- Slightly different lexer than the source language because we are more free
 -- as to what can be identifiers, and fewer tokens are supported. But otherwise,
 -- we can reuse the standard stuff

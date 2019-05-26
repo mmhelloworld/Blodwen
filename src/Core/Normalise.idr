@@ -9,6 +9,8 @@ import Core.TT
 import Data.List
 import Data.Vect
 
+import IdrisJvm.IO
+
 %default covering -- total is hard here, because the things we're evaluating
                   -- might not themselves terminate, but covering is important.
 
@@ -304,7 +306,7 @@ export
 nfAll : Defs -> Env Term free -> Term free -> NF free
 nfAll defs env tm = eval defs withAll env [] tm []
 
-genName : IORef Int -> String -> IO Name
+genName : IORef Int -> String -> JVM_IO Name
 genName num root 
     = do n <- readIORef num
          writeIORef num (n + 1)
@@ -314,7 +316,7 @@ public export
 interface Quote (tm : List Name -> Type) where
   quote : Defs -> Env Term vars -> tm vars -> Term vars
   quoteGen : IORef Int ->
-             Defs -> Env Term vars -> tm vars -> IO (Term vars)
+             Defs -> Env Term vars -> tm vars -> JVM_IO (Term vars)
 
   -- Ugh. An STRef would be better (even if it would be implemented exactly
   -- like this, at least it would have an interface that prevented any chance
@@ -337,13 +339,13 @@ data Bounds : List Name -> Type where
 mutual
   quoteArgs : IORef Int -> Defs -> Bounds bound ->
               Env Term free -> List (Closure free) -> 
-              IO (List (Term (bound ++ free)))
+              JVM_IO (List (Term (bound ++ free)))
   quoteArgs num defs bound env [] = pure []
   quoteArgs num defs bound env (thunk :: args) 
         = pure $ !(quoteGenNF num defs bound env (evalClosure defs thunk)) :: 
                  !(quoteArgs num defs bound env args)
 
-  quoteHead : Bounds bound -> NHead free -> IO (Term (bound ++ free))
+  quoteHead : Bounds bound -> NHead free -> JVM_IO (Term (bound ++ free))
   quoteHead {bound} _ (NLocal r y) 
       = pure $ Local r (addThere bound y)
     where
@@ -366,7 +368,7 @@ mutual
 
   quoteBinder : IORef Int -> Defs -> Bounds bound ->
                 Env Term free -> Binder (NF free) -> 
-                IO (Binder (Term (bound ++ free)))
+                JVM_IO (Binder (Term (bound ++ free)))
   quoteBinder num defs bound env (Lam c x ty) 
       = do ty' <- quoteGenNF num defs bound env ty
            pure (Lam c x ty')
@@ -392,7 +394,7 @@ mutual
   -- need to resolve
   quoteGenNF : IORef Int ->
                Defs -> Bounds bound -> 
-               Env Term vars -> NF vars -> IO (Term (bound ++ vars))
+               Env Term vars -> NF vars -> JVM_IO (Term (bound ++ vars))
   quoteGenNF num defs bound env (NBind n b sc) 
       = do var <- genName num "qv"
            sc' <- quoteGenNF num defs (Add n var bound) env 
@@ -463,7 +465,7 @@ public export
 interface Convert (tm : List Name -> Type) where
   convert : Defs -> Env Term vars -> tm vars -> tm vars -> Bool
   convGen : IORef Int ->
-            Defs -> Env Term vars -> tm vars -> tm vars -> IO Bool
+            Defs -> Env Term vars -> tm vars -> tm vars -> JVM_IO Bool
 
   -- Ugh. An STRef would be better (even if it would be implemented exactly
   -- like this, at least it would have an interface that prevented any chance
@@ -474,14 +476,14 @@ interface Convert (tm : List Name -> Type) where
 
 mutual
   allConv : IORef Int -> Defs -> Env Term vars ->
-            List (Closure vars) -> List (Closure vars) -> IO Bool
+            List (Closure vars) -> List (Closure vars) -> JVM_IO Bool
   allConv num defs env [] [] = pure True
   allConv num defs env (x :: xs) (y :: ys) 
       = pure $ !(convGen num defs env x y) && !(allConv num defs env xs ys)
   allConv num defs env _ _ = pure False
   
   chkConvHead : Defs -> Env Term vars ->
-                NHead vars -> NHead vars -> IO Bool 
+                NHead vars -> NHead vars -> JVM_IO Bool
   chkConvHead defs env (NLocal _ x) (NLocal _ y) = pure $ sameVar x y
   chkConvHead defs env (NRef x y) (NRef x' y') = pure $ y == y'
   chkConvHead defs env x y = pure False
@@ -492,7 +494,7 @@ mutual
   subRig x y = x == y -- otherwise, the multiplicities need to match up
 
   convBinders : IORef Int -> Defs -> Env Term vars ->
-                Binder (NF vars) -> Binder (NF vars) -> IO Bool
+                Binder (NF vars) -> Binder (NF vars) -> JVM_IO Bool
   convBinders num defs env (Pi cx ix tx) (Pi cy iy ty)
       = if ix /= iy || not (subRig cx cy)
            then pure False

@@ -15,6 +15,9 @@ import Parser.Raw
 import Control.Catchable
 import Control.Monad.StateE
 
+import IdrisJvm.IO
+import IdrisJvm.File
+
 %default covering
 
 processDecls : {auto c : Ref Ctxt Defs} -> List RawDecl -> Core () ()

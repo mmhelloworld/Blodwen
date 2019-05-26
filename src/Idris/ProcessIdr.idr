@@ -20,6 +20,9 @@ import Idris.Syntax
 import Control.Catchable
 import Interfaces.FileIO
 
+import IdrisJvm.IO
+import IdrisJvm.File
+
 processDecl : {auto c : Ref Ctxt Defs} ->
               {auto u : Ref UST (UState FC)} ->
               {auto i : Ref ImpST (ImpState FC)} ->

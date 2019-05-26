@@ -6,6 +6,8 @@ import Core.Directory
 import Core.Options
 import Core.Unify
 
+import Control.Catchable
+
 import Idris.CommandLine
 import Idris.ModTree
 import Idris.ProcessIdr
@@ -16,8 +18,12 @@ import Parser.Lexer
 import Parser.Support
 import Utils.Binary
 
-import System
+-- import System
 import Text.Parser
+
+import IdrisJvm.IO
+import IdrisJvm.System
+import IdrisJvm.File
 
 %default covering
 
@@ -182,7 +188,7 @@ build pkg
          runScript (postbuild pkg)
          pure []
 
-copyFile : String -> String -> IO (Either FileError ())
+copyFile : String -> String -> JVM_IO (Either FileError ())
 copyFile src dest
     = do Right buf <- readFromFile src
              | Left err => pure (Left err)

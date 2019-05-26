@@ -17,6 +17,11 @@ import Data.StringMap
 import Data.CSet
 import Data.List
 
+import IdrisJvm.IO
+import IdrisJvm.File
+
+%hide Prelude.File.changeDir
+%hide Prelude.Interactive.printLn
 %default total
 
 public export
@@ -1488,7 +1493,7 @@ setDetermining loc tn args
                            ++ showSep ", " (map show ns)))
 
 export
-runWithCtxt : Show annot => Core annot () -> IO ()
+runWithCtxt : Show annot => Core annot () -> JVM_IO ()
 runWithCtxt prog = coreRun prog
                            (\err => printLn err)
                            (\ok => pure ())

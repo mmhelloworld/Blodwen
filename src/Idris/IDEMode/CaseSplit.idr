@@ -14,6 +14,10 @@ import Idris.Resugar
 import Idris.Syntax
 
 import Control.Monad.State
+import Control.Catchable
+
+import IdrisJvm.IO
+import IdrisJvm.File
 
 %default covering
 

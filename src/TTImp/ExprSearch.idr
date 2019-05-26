@@ -22,6 +22,8 @@ import TTImp.Utils
 
 import Data.List
 
+import Control.Catchable
+
 %default covering
 
 -- Data for building recursive calls - the function name, and the structure

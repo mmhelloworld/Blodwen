@@ -18,3 +18,12 @@ tramp
 /tests/**/output
 /*/build/
 /Notes/*.pdf
+
+*.iml
+ttimpjvm
+blodwenjvmout
+ttimpjvmout
+
+*.class
+*.jar
+build

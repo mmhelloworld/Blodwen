@@ -9,7 +9,16 @@ import Utils.Binary
 import Data.List
 import Data.Vect
 
+import IdrisJvm.Data.Buffer
+import IdrisJvm.IO
+import IdrisJvm.File
+
 %default total
+%hide Prelude.File.File
+%hide Prelude.File.FileError
+%hide Prelude.File.openFile
+%hide Language.Reflection.NameType
+%hide Language.Reflection.Binder
 
 -- TTC instances for TT primitives
 

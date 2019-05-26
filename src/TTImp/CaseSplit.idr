@@ -18,6 +18,8 @@ import TTImp.Utils
 
 import Control.Monad.State
 
+import Control.Catchable
+
 %default covering
 
 -- The result of a request to case split is a list of string updates, i.e. edits
